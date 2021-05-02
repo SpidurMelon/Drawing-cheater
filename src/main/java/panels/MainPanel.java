@@ -27,18 +27,6 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         setOpaque(false);
 
-        JButton addColor = new JButton("Add color");
-        addColor.addActionListener(event ->{
-            holdingColorIndicator = true;
-        });
-        add(addColor);
-
-        JButton removeColors = new JButton("Remove colors");
-        removeColors.addActionListener(event ->{
-            colorsToPick.clear();
-        });
-        add(removeColors);
-
         JButton setPin1 = new JButton("Set pin 1");
         setPin1.addActionListener(event ->{
             holdingPin1 = true;
@@ -50,6 +38,23 @@ public class MainPanel extends JPanel {
             holdingPin2 = true;
         });
         add(setPin2);
+
+        JButton addColor = new JButton("Add color");
+        addColor.addActionListener(event ->{
+            holdingColorIndicator = true;
+        });
+        add(addColor);
+
+        JButton removeColors = new JButton("Remove colors");
+        removeColors.addActionListener(event ->{
+            colorsToPick.clear();
+            repaint();
+        });
+        add(removeColors);
+
+        JSpinner skipSpinner = new JSpinner();
+        skipSpinner.setValue(1);
+        add(skipSpinner);
 
         JButton draw = new JButton("Start drawing");
         draw.addActionListener(event ->{
@@ -67,10 +72,12 @@ public class MainPanel extends JPanel {
 
             DrawingRobot robot = new DrawingRobot(image, absoluteX, absoluteY, width, height, absoluteColorPickers);
             Main.frame.setVisible(false);
-            robot.draw(input);
+            robot.draw((Integer)skipSpinner.getValue());
             Main.frame.setVisible(true);
         });
         add(draw);
+
+
 
         input = new SwingInput(this) {
             @Override

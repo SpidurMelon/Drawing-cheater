@@ -35,7 +35,7 @@ public class DrawingRobot {
         }
     }
 
-    public void draw(SwingInput input) {
+    public void draw(int skip) {
         if (robot == null) return;
         HashMap<Point, Color> availableColors = new HashMap<Point, Color>();
         for (Point p:colorPickers) {
@@ -44,30 +44,33 @@ public class DrawingRobot {
         BufferedImage scaledImage = convertImage(image.getScaledInstance(width, height, 0));
         FastRGB fastRGB = new FastRGB(scaledImage);
 
-        for (int y = 0; y < scaledImage.getHeight(null); y++) {
+        for (int y = 0; y < scaledImage.getHeight(null); y+=skip) {
             Color prevColor = null;
             int startX = 0;
-            for (int x = 0; x < scaledImage.getWidth(null); x++) {
+            for (int x = 0; x < scaledImage.getWidth(null); x+=skip) {
                 int rgb = fastRGB.getRGB(x, y);
                 Map.Entry<Point, Color> colorPick = getBestColorPick(new Color(rgb), availableColors);
                 if (prevColor == null) {
                     pickColor(colorPick);
                     prevColor = colorPick.getValue();
                 } else if (!prevColor.equals(colorPick.getValue())) {
-                    move(this.x+startX, this.y+y);
-                    press();
-                    move(this.x+x, this.y+y);
-                    release();
-
+                    for (int yAddition = 0; yAddition < skip; yAddition++) {
+                        move(this.x + startX, this.y + y + yAddition);
+                        press();
+                        move(this.x + x, this.y + y + yAddition);
+                        release();
+                    }
                     startX = x;
                     pickColor(colorPick);
                     prevColor = colorPick.getValue();
                 }
             }
-            move(this.x+startX, this.y+y);
-            press();
-            move(this.x+scaledImage.getWidth(null)-1, this.y+y);
-            release();
+            for (int yAddition = 0; yAddition < skip; yAddition++) {
+                move(this.x + startX, this.y + y + yAddition);
+                press();
+                move(this.x+scaledImage.getWidth(null)-1, this.y + y + yAddition);
+                release();
+            }
         }
 
     }
