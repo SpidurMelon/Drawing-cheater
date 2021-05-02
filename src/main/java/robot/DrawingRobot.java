@@ -44,6 +44,12 @@ public class DrawingRobot {
         BufferedImage scaledImage = convertImage(image.getScaledInstance(width, height, 0));
         FastRGB fastRGB = new FastRGB(scaledImage);
 
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         for (int y = 0; y < scaledImage.getHeight(null); y+=skip) {
             Color prevColor = null;
             int startX = 0;
@@ -112,48 +118,6 @@ public class DrawingRobot {
         Graphics g = result.getGraphics();
         g.drawImage(toConvert, 0, 0, toConvert.getWidth(null), toConvert.getHeight(null), null);
         g.dispose();
-        return result;
-    }
-
-    private static int[][] convertTo2DWithoutUsingGetRGB(BufferedImage image) {
-        final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-        final int width = image.getWidth();
-        final int height = image.getHeight();
-        final boolean hasAlphaChannel = image.getAlphaRaster() != null;
-
-        int[][] result = new int[height][width];
-        if (hasAlphaChannel) {
-            final int pixelLength = 4;
-            for (int pixel = 0, row = 0, col = 0; pixel + 3 < pixels.length; pixel += pixelLength) {
-                int argb = 0;
-                argb += (((int) pixels[pixel] & 0xff) << 24); // alpha
-                argb += ((int) pixels[pixel + 1] & 0xff); // blue
-                argb += (((int) pixels[pixel + 2] & 0xff) << 8); // green
-                argb += (((int) pixels[pixel + 3] & 0xff) << 16); // red
-                result[row][col] = argb;
-                col++;
-                if (col == width) {
-                    col = 0;
-                    row++;
-                }
-            }
-        } else {
-            final int pixelLength = 3;
-            for (int pixel = 0, row = 0, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
-                int argb = 0;
-                argb += -16777216; // 255 alpha
-                argb += ((int) pixels[pixel] & 0xff); // blue
-                argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
-                argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
-                result[row][col] = argb;
-                col++;
-                if (col == width) {
-                    col = 0;
-                    row++;
-                }
-            }
-        }
-
         return result;
     }
 }
