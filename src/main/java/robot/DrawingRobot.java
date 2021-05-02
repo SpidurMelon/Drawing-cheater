@@ -47,7 +47,7 @@ public class DrawingRobot {
         FastRGB fastRGB = new FastRGB(scaledImage);
 
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
