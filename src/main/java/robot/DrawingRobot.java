@@ -5,6 +5,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class DrawingRobot {
     }
 
     public void draw(int skip) {
+        long before = System.currentTimeMillis();
         if (robot == null) return;
         HashMap<Point, Color> availableColors = new HashMap<Point, Color>();
         for (Point p:colorPickers) {
@@ -78,7 +80,8 @@ public class DrawingRobot {
                 release();
             }
         }
-
+        long after = System.currentTimeMillis();
+        System.out.println("The image took " + ((after-before)/1000f) + " seconds to draw");
     }
     private void pickColor(Map.Entry<Point, Color> colorPick) {
         release();
